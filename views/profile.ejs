@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <title>What are you bringing?</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1>Invite</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <h2>Hey!!</h2>
+          
+            <p>Hope you're doing well! I am feeling a little tech savy so I made this app to help me find out who is coming and what they are bringing so there is different things. Fill out the form to RSVP below!</p>
+          
+            <div class="form-group">
+              <label for="eventDropDown">Event</label>
+              <select class="form-control" id="eventDropDown" name="eventId">
+                <option value="" disabled selected>Select an option</option>
+                <% for(let i=0; i<events.length; i++) {%>
+                  <option value="<%= events[i]._id %>"><%= events[i].title %></option>
+                <% } %>
+              </select>
+            </div>
+          
+            <% for(let i=0; i<events.length; i++) {%>
+              <div class="event hidden" id="event<%= i %>">
+                <p><%= events[i].desc %></p>
+                <p><%= events[i].address %></p>
+                <p><%= events[i].date %></p>
+                
+              </div>
+            <% } %>
+          
+          </div>
+          
+<script src="main.js"></script>
+
+</body>
+</html>
