@@ -1,49 +1,88 @@
 <!doctype html>
 <html>
-<head>
-    <title>What are you bringing?</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="container">
 
-    <div class="page-header text-center">
+<head>
+  <title>What are you bringing?</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <body>
+    <div class="container">
+
+      <div class="page-header text-center">
         <h1>Invite</h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-    </div>
+      </div>
 
-    <div class="row">
+      <div class="row">
 
         <div class="col-sm-6">
-
-            <h2>Hey!!</h2>
-          
-            <p>Hope you're doing well! I am feeling a little tech savy so I made this app to help me find out who is coming and what they are bringing so there is different things. Fill out the form to RSVP below!</p>
-          
+          <h2>Hey!!</h2>
+          <p>Hope you're doing well! I am feeling a little tech savy so I made this app to help me find out who is
+            coming and what they are bringing so there is different things. Fill out the form to RSVP below!</p>
+          <form action="/updateEvent" method="POST">
             <div class="form-group">
               <label for="eventDropDown">Event</label>
               <select class="form-control" id="eventDropDown" name="eventId">
-                <option value="" disabled selected>Select an option</option>
+                <option disabled selected>Select an option</option>
                 <% for(let i=0; i<events.length; i++) {%>
-                  <option value="<%= events[i]._id %>"><%= events[i].title %></option>
-                <% } %>
+                  <option value="<%= events[i]._id %>">
+                    <%= events[i].title %>
+                  </option>
+                  <% } %>
               </select>
             </div>
-          
-            <% for(let i=0; i<events.length; i++) {%>
-              <div class="event hidden" id="event<%= i %>">
-                <p><%= events[i].desc %></p>
-                <p><%= events[i].address %></p>
-                <p><%= events[i].date %></p>
-                
-              </div>
-            <% } %>
-          
-          </div>
-          
-<script src="main.js"></script>
+            <% for(let i=0; i<events.length; i++){ %>
+              <div class="event hidden">
+                <p>
+                  <%= events[i].desc %>
+                </p>
+                <p>
+                  <%= events[i].address %>
+                </p>
+                <p>
+                  <%= events[i].date %>
+                </p>
+              
+              
+                <h1>List of known Allergies</h1>
+                <ul>
+                  <% if(events[i].allergies){ %>
+                    <% for(let j=0; i<events[i].allergies.length; i++){ %>
+                      <li> <%= events[i].allergies[j] %></li>
+                    <% } %>
+                  <% } %>
+                </ul>
+                </div>
+                <% } %>
+                <h1>Person Count</h1>
+                <h3>
+                  <%= events.peopleComing %>
+                </h3>
+                <% if (user.local.email) { %>
+                  <div class="form-group">
+                    <label for="allergiesInput">Allergies</label>
+                    <input type="text" class="form-control" id="allergiesInput" name="allergies"
+                      placeholder="What are you allergic to?">
+                    <label for="peopleComingInput">Number of People Coming</label>
+                    <input type="number" class="form-control" id="peopleComingInput" name="peopleComing"
+                      placeholder="Number of people coming">
+                    <button type="submit">Submit</button>
+                  </div>
 
-</body>
+                  <% } %>
+                </form>
+
+
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+
+  </body>
+
 </html>

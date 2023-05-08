@@ -1,4 +1,4 @@
-module.exports = function(app, passport, db) {
+module.exports = function(app, passport, db, ObjectId) {
 
 // normal routes ===============================================================
 
@@ -17,6 +17,19 @@ module.exports = function(app, passport, db) {
           })
         })
     });
+    app.get('/profile', function(req, res) {
+      db.collection('events').find().toArray((err, result)=> {
+        if (err) throw err;
+    
+        // retrieve the allergies and peopleCount from the first event in the database
+        let allergies = result[0].allergies;
+        let peopleCount = result[0].peopleComing;
+    
+        // render the template and pass in the allergies and peopleCount variables
+        res.render('profile.ejs', { allergies: req.body.allergies, peopleCount: req.body.peopleCount });
+      });
+    });
+    
 
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
@@ -28,19 +41,28 @@ module.exports = function(app, passport, db) {
 
 // message board routes ===============================================================
 
-    app.post('/messages', (req, res) => {
-      db.collection('homeSweetHome').save({date: req.body.date, distance: req.body.distance, time: req.body.time, city: req.body.city, state: req.body.state}, (err, result) => {
-        if (err) return console.log(err)
-        console.log('saved to database')
-        res.redirect('/profile')
-      })
-    })
+app.post('/updateEvent', (req, res) => {
+  const eventId = req.body.eventId;
+  const allergies = req.body.allergies;
+  const peopleComing = req.body.peopleComing;
+console.log(eventId)
+  db.collection('events').updateOne(
+    { _id: ObjectId(eventId) },
+    { $push: { allergies: allergies }, $inc: { peopleComing: parseInt(peopleComing) } },
+    (err, result) => {
+      if (err) return console.log(err);
+      console.log('RSVP saved to database');
+      res.redirect('/profile');
+    }
+  );
+});
 
-    app.put('/messages', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    app.put('/events', (req, res) => {
+      db.collection('homeSweetHome')
+      .findOneAndUpdate({date: req.body.date, distance: req.body.distance, time: req.body.time, city: req.body.city, state: req.body.state, allergies : req.body.allergies, peopleComing: req.body.peopleComing}, {
         $set: {
-          thumbUp:req.body.thumbUp + 1
+          allergies : req.body.allergies, 
+          peopleComing: req.body.peopleComing
         }
       }, {
         sort: {_id: -1},
@@ -48,28 +70,6 @@ module.exports = function(app, passport, db) {
       }, (err, result) => {
         if (err) return res.send(err)
         res.send(result)
-      })
-    })
-    
-    app.put('/messages/thumbDown', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp - 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
-    })
-  
-    app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-        if (err) return res.send(500, err)
-        res.send('Message deleted!')
       })
     })
 
